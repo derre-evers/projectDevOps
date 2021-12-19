@@ -41,10 +41,10 @@ namespace projectDevOps
             }
         }
 
-        
+
         private async void btnSearchHist_Click(object sender, EventArgs e)
         {
-            string history = (string)lbHistory.SelectedItem;            
+            string history = (string)lbHistory.SelectedItem;
             string[] historySplit = history.Split('-');
             string name = historySplit[0].Trim(' ');
             string fromAbout = historySplit[1].Trim(' ');
@@ -58,14 +58,15 @@ namespace projectDevOps
             searchedDate = new List<string>();
             if (fromAbout == "about")
             {
-                tweets = await userClient.Search.SearchTweetsAsync(name);               
+                tweets = await userClient.Search.SearchTweetsAsync(name);
 
             }
             else if (fromAbout == "from")
             {
-                tweets = await userClient.Timelines.GetUserTimelineAsync(name);                
+                tweets = await userClient.Timelines.GetUserTimelineAsync(name);
             }
-
+            lblResult.Visible = true;
+            btnBack.Visible = true;
             foreach (ITweet tweet in tweets)
             {
 
@@ -73,21 +74,27 @@ namespace projectDevOps
                 searchedTweeter.Add(tweet.CreatedBy.ToString());
                 searchedDate.Add(tweet.CreatedAt.ToString("dd-MM-yyyy"));
             }
-            dataTweets.Visible = true;
-            btnBack.Visible = true;
-            int i = 0;
-            while (i <= searchedText.Count - 1)
+            if (searchedText.Count != 0)
             {
-                dataTweets.Rows.Add(searchedTweeter[i], searchedDate[i], searchedText[i]);
-                i++;
+                dataTweets.Visible = true;
+
+                int i = 0;
+                while (i <= searchedText.Count - 1)
+                {
+                    dataTweets.Rows.Add(searchedTweeter[i], searchedDate[i], searchedText[i]);
+                    i++;
+                }
+
+                lblResult.Text = "Tweets " + fromAbout + " " + name;
             }
-            lblResult.Visible = true;
-            lblResult.Text = "Tweets " + fromAbout + " " + name;
 
+            else
+            {
+                lblResult.Text = "There are no tweets " + fromAbout + " " + name;
 
+            }
         }
-
-        private void btnBack_Click(object sender, EventArgs e)
+            private void btnBack_Click(object sender, EventArgs e)
         {
             dataTweets.Visible = false;
             btnBack.Visible = false;
